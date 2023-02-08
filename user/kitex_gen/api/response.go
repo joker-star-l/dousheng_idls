@@ -3,54 +3,10 @@
 package api
 
 import (
-	"database/sql"
-	"database/sql/driver"
 	"fmt"
 	"github.com/apache/thrift/lib/go/thrift"
 	"strings"
 )
-
-type StatusCode int64
-
-const (
-	StatusCode_Success StatusCode = 0
-	StatusCode_Error   StatusCode = 1
-)
-
-func (p StatusCode) String() string {
-	switch p {
-	case StatusCode_Success:
-		return "Success"
-	case StatusCode_Error:
-		return "Error"
-	}
-	return "<UNSET>"
-}
-
-func StatusCodeFromString(s string) (StatusCode, error) {
-	switch s {
-	case "Success":
-		return StatusCode_Success, nil
-	case "Error":
-		return StatusCode_Error, nil
-	}
-	return StatusCode(0), fmt.Errorf("not a valid StatusCode string")
-}
-
-func StatusCodePtr(v StatusCode) *StatusCode { return &v }
-func (p *StatusCode) Scan(value interface{}) (err error) {
-	var result sql.NullInt64
-	err = result.Scan(value)
-	*p = StatusCode(result.Int64)
-	return
-}
-
-func (p *StatusCode) Value() (driver.Value, error) {
-	if p == nil {
-		return nil, nil
-	}
-	return int64(*p), nil
-}
 
 type Response struct {
 	StatusCode int32  `thrift:"statusCode,1,required" frugal:"1,required,i32" json:"statusCode"`
