@@ -38,7 +38,7 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func userInfoHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	realArg := arg.(*api.UserUserInfoArgs)
 	realResult := result.(*api.UserUserInfoResult)
-	success, err := handler.(api.User).UserInfo(ctx, realArg.UserId)
+	success, err := handler.(api.User).UserInfo(ctx, realArg.UserId, realArg.QueryId)
 	if err != nil {
 		return err
 	}
@@ -63,9 +63,10 @@ func newServiceClient(c client.Client) *kClient {
 	}
 }
 
-func (p *kClient) UserInfo(ctx context.Context, userId int64) (r *api.UserInfoResponse, err error) {
+func (p *kClient) UserInfo(ctx context.Context, userId int64, queryId int64) (r *api.UserInfoResponse, err error) {
 	var _args api.UserUserInfoArgs
 	_args.UserId = userId
+	_args.QueryId = queryId
 	var _result api.UserUserInfoResult
 	if err = p.c.Call(ctx, "userInfo", &_args, &_result); err != nil {
 		return
